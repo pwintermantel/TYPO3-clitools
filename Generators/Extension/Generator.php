@@ -10,23 +10,60 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
    *
    */
   public function start($argv) {
+    $this->initializeExtbuilder();	
     $this->ext = t3lib_div::makeInstance('Tx_ExtensionBuilder_Domain_Model_Extension');
     $this->ext->setExtensionKey($argv[0]);
     $this->ext->setName($argv[1]);
     $this->writeExtension();
   }
 
+
+  /**
+   * Handles the initializiation of Extbuilder objects
+   *
+   * @return void
+   */
+  private function initializeExtbuilder() {
+    $this->codeGenerator = t3lib_div::makeInstance('Tx_ExtensionBuilder_Service_CodeGenerator');
+    $this->classParser = t3lib_div::makeInstance('Tx_ExtensionBuilder_Utility_ClassParser');
+		$this->roundTripService = t3lib_div::makeInstance('Tx_ExtensionBuilder_Service_RoundTrip');
+		$this->classBuilder = t3lib_div::makeInstance('Tx_ExtensionBuilder_Service_ClassBuilder');
+		$this->templateParser =t3lib_div::makeInstance('Tx_Fluid_Core_Parser_TemplateParser');
+		$this->codeGenerator = t3lib_div::makeInstance('Tx_ExtensionBuilder_Service_CodeGenerator');
+		$this->codeGenerator->setSettings(
+			array(
+				'codeTemplateRootPath' => PATH_typo3conf.'ext/extension_builder/Resources/Private/CodeTemplates/Extbase/',
+
+      ));
+    if (class_exists('Tx_Extbase_Object_ObjectManager')) {
+			$this->objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_ObjectManager');
+			$this->codeGenerator->injectObjectManager($this->objectManager);
+			$this->templateParser->injectObjectManager($this->objectManager);
+		}
+
+		$this->roundTripService->injectClassParser($this->classParser);
+
+		$this->classBuilder->injectRoundtripService($this->roundTripService);
+
+		$this->codeGenerator->injectTemplateParser($this->templateParser);
+		$this->codeGenerator->injectClassBuilder($this->classBuilder);
+  }
+
+
+  /**
+   * Checks if Extension Dir exists and writes Contents
+   * @return void
+   */
   private function writeExtension() {
-    if (!is_dir($this->ext->getExtensionDir())) {
-        t3lib_div::mkdir($this->ext->getExtensionDir());
-		} else {
+    tx_clitools::info('Creating extension');
+    if (is_dir($this->ext->getExtensionDir())) {
       fwrite(STDOUT, "Directory {$this->ext->getExtensionDir()} not empty. Overwrite? [y/N] \n"); // Output - prompt user
       $overwrite = chop(fgets(STDIN));
       if(!preg_match('/y/i', $overwrite)) {
-        return;
+        return false;
       }
     }
-    $this->codeGenerator->build($extension);
+    $this->codeGenerator->build($this->ext);
   }
 }
 
