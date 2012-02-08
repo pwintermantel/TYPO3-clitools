@@ -10,6 +10,7 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
    *
    */
   public function start($argv) {
+    $this->checkDependencies();
     $this->initializeExtbuilder();	
     $this->ext = t3lib_div::makeInstance('Tx_ExtensionBuilder_Domain_Model_Extension');
     $this->ext->setExtensionKey($argv[0]);
@@ -17,6 +18,17 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
     $this->writeExtension();
   }
 
+
+  /**
+   * Checks the dependencies for this generator
+   *
+   * @TODO 
+   */
+  public function checkDependencies() {
+    if ((float) t3lib_extMgm::getExtensionVersion('extension_builder') < 2) {
+      throw new Tx_Clitools_Exception_Dependency('This generator depends on extension_builder 2 higher');
+    }
+  }
 
   /**
    * Handles the initializiation of Extbuilder objects
@@ -30,11 +42,10 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
 		$this->classBuilder = t3lib_div::makeInstance('Tx_ExtensionBuilder_Service_ClassBuilder');
 		$this->templateParser =t3lib_div::makeInstance('Tx_Fluid_Core_Parser_TemplateParser');
 		$this->codeGenerator = t3lib_div::makeInstance('Tx_ExtensionBuilder_Service_CodeGenerator');
-		$this->codeGenerator->setSettings(
-			array(
+		$this->codeGenerator->setSettings(array(
 				'codeTemplateRootPath' => PATH_typo3conf.'ext/extension_builder/Resources/Private/CodeTemplates/Extbase/',
+    ));
 
-      ));
     if (class_exists('Tx_Extbase_Object_ObjectManager')) {
 			$this->objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_ObjectManager');
 			$this->codeGenerator->injectObjectManager($this->objectManager);
@@ -42,9 +53,7 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
 		}
 
 		$this->roundTripService->injectClassParser($this->classParser);
-
 		$this->classBuilder->injectRoundtripService($this->roundTripService);
-
 		$this->codeGenerator->injectTemplateParser($this->templateParser);
 		$this->codeGenerator->injectClassBuilder($this->classBuilder);
   }
