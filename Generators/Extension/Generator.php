@@ -13,8 +13,8 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
     $this->checkDependencies();
     $this->initializeExtbuilder();	
     $this->ext = t3lib_div::makeInstance('Tx_ExtensionBuilder_Domain_Model_Extension');
-    $this->ext->setExtensionKey($argv[0]);
-    $this->ext->setName($argv[1]);
+    $this->ext->setExtensionKey($argv[1]);
+    $this->ext->setName($argv[2]);
     $this->writeExtension();
   }
 

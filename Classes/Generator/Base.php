@@ -14,4 +14,12 @@ abstract class Tx_Clitools_Generator_Base
   public function Tx_Clitools_Generator_Base() {
     
   }
+
+   /**
+   * Checks the dependencies for this generator
+   *
+   * @TODO 
+   */
+  public function checkDependencies() {
+  }
 }
