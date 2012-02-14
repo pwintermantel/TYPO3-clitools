@@ -32,8 +32,8 @@ This generator exposes the Extension Builders funtionality to generate a
 bare extension structure.
 
 TODO:
-- Add arguments and options for categories and persons
-- Implement Tests and improve error proneness
+* Add arguments and options for categories and persons
+* Implement Tests and improve error proneness
 
 Arguments:
 * extension key
@@ -51,10 +51,10 @@ argument you can put the class category, such as task, service,
 controller... A corresponding PHPUnit test file will be created too.
 
 TODO:
-- Add more categories (Controller, Model (Nested), Service, Test, Task,
+* Add more categories (Controller, Model (Nested), Service, Test, Task,
   and maybe custom categories)
-- Implement Tests and improve error proneness
-- Check for existing files. Existing Files are still overwritten.
+* Implement Tests and improve error proneness
+* Check for existing files. Existing Files are still overwritten.
 
 Currently implemented categories:
 * Task
