@@ -27,10 +27,10 @@ class tx_clitools extends t3lib_cli
       switch($argv[1]) {
         case 'g':
         case 'generate':
-            $generatorKey = ucfirst($argv[2]);
+            $generatorKey = self::findGeneratorByAlias($argv[2]);
             require_once dirname(dirname(__FILE__)) . "/Generators/{$generatorKey}/Generator.php";
             $generator = t3lib_div::makeInstance('Tx_Clitools_Generators_' . $generatorKey . '_Generator');
-            $generator->start(array_slice($argv, 3));
+            $generator->start(array_slice($argv, 2));
           break;
         default:
           self::error('Argument not found');
@@ -39,6 +39,23 @@ class tx_clitools extends t3lib_cli
       } catch(Exception $e) {
         self::error($e->getMessage());
     }
+  }
+
+
+  /**
+   * Finds generator by alias
+   */
+  public static function findGeneratorByAlias($arg) {
+    $arg = ucfirst(trim($arg));
+    $generators = array(
+      'Class' => array('Task')
+    );
+    foreach ($generators as $g => $aliases) {
+      if(in_array($arg, $aliases)) {
+        return $g;
+      }
+    }
+    return $arg;
   }
 
 
@@ -62,6 +79,7 @@ class tx_clitools extends t3lib_cli
   public static function info($text) {
     self::colorPrint(self::YELLOW, $text);
   }
+
 
   /**
    * print colored text to STDOUT
