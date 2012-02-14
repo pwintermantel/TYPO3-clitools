@@ -26,11 +26,14 @@
 class Tx_Clitools_Generators_Class_GeneratorTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 {
   public function setUp() {
-    require_once(dirname(__FILE__). '/../../Generator.php');
+    require_once(dirname(__FILE__). '/../../Classes/Generator.php');
     $this->generator = t3lib_div::makeInstance('Tx_Clitools_Generators_Class_Generator');
   }
 
-  public function tearDown() {}
+
+  public function tearDown() {
+  }
+
 
   /**
    * @TODO Mock out t3lib call
@@ -41,6 +44,7 @@ class Tx_Clitools_Generators_Class_GeneratorTest extends Tx_Extbase_Tests_Unit_B
     $this->getExposedMethod('getExtensionPath')->invoke($this->generator, 'iisnotthere');
   }
 
+
   /**
    * @TODO Mock out t3lib call
    * @test
@@ -49,6 +53,18 @@ class Tx_Clitools_Generators_Class_GeneratorTest extends Tx_Extbase_Tests_Unit_B
     $path = $this->getExposedMethod('getExtensionPath')->invoke($this->generator, 'clitools');
     $this->assertEquals(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/', $path);
   }
+
+
+  /**
+   * @test
+   */
+  public function getFileContentShouldReturnRenderedViewString() {
+    $method = $this->getExposedMethod('getFileContent');
+    $string = $method->invoke($this->generator, 'Task', 'bar', 'foo');
+    $expected = file_get_contents(dirname(dirname(__FILE__)) . '/Fixtures/task.txt');
+    $this->assertEquals($expected, $string);
+  }
+
 
   private function getExposedMethod($method) {
     $class = new ReflectionClass($this->generator);

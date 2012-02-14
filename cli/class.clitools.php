@@ -40,6 +40,7 @@ class tx_clitools extends t3lib_cli
    * CLI Entry point
    * @param array $argv CLI Arguments
    * @return string CLI Output
+   * @TODO throw exception when invalid generator is called
    */
   public function dispatch($argv) {
     try {
@@ -48,7 +49,7 @@ class tx_clitools extends t3lib_cli
         case 'g':
         case 'generate':
             $generatorKey = self::findGeneratorByAlias($argv[2]);
-            require_once dirname(dirname(__FILE__)) . "/Generators/{$generatorKey}/Generator.php";
+            require_once dirname(dirname(__FILE__)) . "/Generators/{$generatorKey}/Classes/Generator.php";
             $generator = t3lib_div::makeInstance('Tx_Clitools_Generators_' . $generatorKey . '_Generator');
             $generator->start(array_slice($argv, 2));
           break;

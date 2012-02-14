@@ -1,0 +1,9 @@
+<?php
+/**
+ *
+ * @author ...
+ * @package foo
+ */
+class Tx_Foo_Task_Bar extends t3lib_singleton
+{
+}
