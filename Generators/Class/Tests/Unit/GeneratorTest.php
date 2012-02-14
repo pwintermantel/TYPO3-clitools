@@ -23,3 +23,37 @@
  * @package clitools
  *
  **/
+class Tx_Clitools_Generators_Class_GeneratorTest extends Tx_Extbase_Tests_Unit_BaseTestCase
+{
+  public function setUp() {
+    require_once(dirname(__FILE__). '/../../Generator.php');
+    $this->generator = t3lib_div::makeInstance('Tx_Clitools_Generators_Class_Generator');
+  }
+
+  public function tearDown() {}
+
+  /**
+   * @TODO Mock out t3lib call
+   * @expectedException BadFunctionCallException
+   * @test
+   */
+  public function getExtensionPathShouldThrowGeneratorException() {
+    $this->getExposedMethod('getExtensionPath')->invoke($this->generator, 'iisnotthere');
+  }
+
+  /**
+   * @TODO Mock out t3lib call
+   * @test
+   */
+  public function getExtensionPathShouldReturnPath() {
+    $path = $this->getExposedMethod('getExtensionPath')->invoke($this->generator, 'clitools');
+    $this->assertEquals(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/', $path);
+  }
+
+  private function getExposedMethod($method) {
+    $class = new ReflectionClass($this->generator);
+    $method = $class->getMethod ($method);
+    $method->setAccessible(true);
+    return $method;
+  }
+}
