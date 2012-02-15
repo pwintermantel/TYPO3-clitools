@@ -13,7 +13,7 @@ class Tx_Clitools_Generators_Class_Generator extends Tx_Clitools_Generator_Base
    * @return void
    * @throws Tx_Clitools_Exception_Generator
    */
-  public function start($argv) {
+  public function start() {
     $this->checkDependencies();
     tx_clitools::info('Creating Class and Test Files');
     $classType  = ucfirst(trim($argv[0]));

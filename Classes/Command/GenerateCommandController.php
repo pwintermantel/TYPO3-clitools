@@ -23,27 +23,13 @@
  * @package clitools
  *
  **/
-abstract class Tx_Clitools_Generator_Base
-{
-  /**
-   * @var string
-   */
-  protected $template = '';
-
-  /**
-   * @var string
-   */
-  protected $extKey = '';
-
-  /**
-   * @var string
-   */
-  protected $name;
+class Tx_Clitools_Command_GenerateCommandController extends Tx_Extbase_MVC_Controller_CommandController {
 
   /**
    * @var ioService Tx_Clitools_Service_IOService
    */
-  protected $ioService;
+  private $ioService;
+
 
   /**
    * @param Tx_Clitools_Service_IOService $service
@@ -52,44 +38,43 @@ abstract class Tx_Clitools_Generator_Base
     $this->ioService = $service;
   }
 
+
   /**
-   * Checks the dependencies for this generator
+   * Generate a Task Class
    *
-   * @return void
+   * Generates a Task Class with corresponding Test File if PHPunit is installed
+   *
+   * @param string $extKey Extension Key
+   * @param string $name The task Name
    */
-  public  function checkDependencies() {
-  }
-
-  /**
-   * Setter for Extension Key
-   * @param string $extKey
-   */
-  public function setExtKey($extKey) {
-    $this->extKey = $extKey;
-  }
-
-  /**
-   * Setter for Name
-   * @param string $name
-   */
-  public function setName($name) {
-    $this->name = $name;
+  public function taskCommand($extKey, $name) {
   }
 
 
   /**
-   * Getter for Extension Key
-   * @return string $extKey
+   * Generate a extension skeleton:
+   *
+   * Generates a extension using the extention builders facilities
+   *
+   * @param string $extKey The Extension Key
+   * @param string $name The Extension Name
    */
-  public function getExtKey() {
-    return $this->extKey;
+  public function extensionCommand($extKey, $name) {
+    $generator = $this->objectManager->get('Tx_Clitools_Generators_Extension_Generator');
+    $generator->injectIOService($this->ioService);
+    $generator->setExtKey($extKey);
+    $generator->setName($name);
+    $this->run(function() use ($generator) {
+      $generator->start();
+    });
   }
 
-  /**
-   * Getter for Name
-   * @return string $name
-   */
-  public function getName() {
-    return $this->name;
+
+  private function run($func) {
+    try {
+      $func();
+    } catch(Exception $e) {
+      $this->ioService->out($e->getMessage(), Tx_Clitools_Service_IOService::WARNING);
+    }
   }
 }

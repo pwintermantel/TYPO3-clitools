@@ -22,33 +22,31 @@
  * @author Philipp Wintermantel <philipp@wintermantel.org>
  * @package clitools
  *
- **/
+ */
 class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_Base
       implements Tx_Clitools_Generator_Interface
 {
-  /**
-   *
-   */
-  public function start($argv) {
+  public function start() {
     $this->checkDependencies();
     $this->initializeExtbuilder();	
     $this->ext = t3lib_div::makeInstance('Tx_ExtensionBuilder_Domain_Model_Extension');
-    $this->ext->setExtensionKey($argv[1]);
-    $this->ext->setName($argv[2]);
+    $this->ext->setExtensionKey($this->getExtKey());
+    $this->ext->setName($this->getName());
     $this->writeExtension();
   }
-
 
   /**
    * Checks the dependencies for this generator
    *
-   * @TODO 
+   * @throws Tx_Clitools_Exception_Dependency
+   * @return void
    */
-  public function checkDependencies() {
+  public  function checkDependencies() {
     if ((float) t3lib_extMgm::getExtensionVersion('extension_builder') < 2) {
       throw new Tx_Clitools_Exception_Dependency('This generator depends on extension_builder 2 higher');
     }
   }
+
 
   /**
    * Handles the initializiation of Extbuilder objects
@@ -84,11 +82,9 @@ class Tx_Clitools_Generators_Extension_Generator extends Tx_Clitools_Generator_B
    * @return void
    */
   private function writeExtension() {
-    tx_clitools::info('Creating extension');
     if (is_dir($this->ext->getExtensionDir())) {
-      fwrite(STDOUT, "Directory {$this->ext->getExtensionDir()} not empty. Overwrite? [y/N] \n"); // Output - prompt user
-      $overwrite = chop(fgets(STDIN));
-      if(!preg_match('/y/i', $overwrite)) {
+      $this->ioService->out("Directory {$this->ext->getExtensionDir()} not empty. Overwrite? [y/N]"); // Output - prompt user
+      if(!preg_match('/y/i', $this->ioService->in())) {
         return false;
       }
     }

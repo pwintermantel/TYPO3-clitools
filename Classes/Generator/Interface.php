@@ -28,7 +28,6 @@ interface Tx_Clitools_Generator_Interface
 
   /**
    * Main entry point for generator
-   * @param $args array Generator arguments
    */
-  public function start($args);
+  public function start();
 }

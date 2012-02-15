@@ -22,74 +22,55 @@
  * @author Philipp Wintermantel <philipp@wintermantel.org>
  * @package clitools
  *
- **/
-abstract class Tx_Clitools_Generator_Base
+ */
+class  Tx_Clitools_Service_IOService
 {
-  /**
-   * @var string
-   */
-  protected $template = '';
+  const WARNING = 'warning';
+  const NOTICE  = 'notice';
+  const SUCCESS = 'success';
+
+  const GREEN="\033[0;32m";
+  const RED="\033[0;31m";
+  const YELLOW="\033[0;33m";
+  const LIGHTGRAY="\033[0;37m";
+  const WHITE="\033[1;37m";
 
   /**
-   * @var string
+   * @todo make setting configurable
    */
-  protected $extKey = '';
+  public function __construct() {
+    $this->in = STDIN;
 
-  /**
-   * @var string
-   */
-  protected $name;
+    $this->levelOutput = array(
+      self::WARNING => STDERR,
+      self::NOTICE  => STDOUT,
+      self::SUCCESS => STDOUT
+    );
 
-  /**
-   * @var ioService Tx_Clitools_Service_IOService
-   */
-  protected $ioService;
-
-  /**
-   * @param Tx_Clitools_Service_IOService $service
-   */
-  public function injectIOService(Tx_Clitools_Service_IOService $service) {
-    $this->ioService = $service;
+    $this->levelColors = array(
+      self::WARNING => self::RED,
+      self::NOTICE  => self::YELLOW,
+      self::SUCCESS => self::GREEN
+    );
   }
 
   /**
-   * Checks the dependencies for this generator
+   * Writes formated message to output
    *
+   * @param string The Message
+   * @param string The Severity Level
    * @return void
    */
-  public  function checkDependencies() {
+  public function out($message, $level=self::NOTICE) {
+    fwrite($this->levelOutput[$level], $this->levelColors[$level] . $message . self::WHITE . chr(10));
   }
 
   /**
-   * Setter for Extension Key
-   * @param string $extKey
+   * Returns stdin args
+   *
+   * @return string
    */
-  public function setExtKey($extKey) {
-    $this->extKey = $extKey;
-  }
-
-  /**
-   * Setter for Name
-   * @param string $name
-   */
-  public function setName($name) {
-    $this->name = $name;
-  }
-
-
-  /**
-   * Getter for Extension Key
-   * @return string $extKey
-   */
-  public function getExtKey() {
-    return $this->extKey;
-  }
-
-  /**
-   * Getter for Name
-   * @return string $name
-   */
-  public function getName() {
-    return $this->name;
+  public function in() {
+    return fgets($this->in);
   }
 }
