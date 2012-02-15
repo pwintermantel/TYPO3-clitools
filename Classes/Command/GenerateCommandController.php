@@ -64,15 +64,13 @@ class Tx_Clitools_Command_GenerateCommandController extends Tx_Extbase_MVC_Contr
     $generator->injectIOService($this->ioService);
     $generator->setExtKey($extKey);
     $generator->setName($name);
-    $this->run(function() use ($generator) {
-      $generator->start();
-    });
+    $this->run($generator);
   }
 
 
-  private function run($func) {
+  private function run($generator) {
     try {
-      $func();
+      $generator->start();
     } catch(Exception $e) {
       $this->ioService->out($e->getMessage(), Tx_Clitools_Service_IOService::WARNING);
     }
